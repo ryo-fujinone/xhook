@@ -111,11 +111,6 @@ const Xhook = function () {
   const emitReadyState = function (n) {
     while (n > currentState && currentState < 4) {
       facade.readyState = ++currentState;
-      // make fake events for libraries that actually check the type on
-      // the event object
-      if (currentState === 1) {
-        facade.dispatchEvent("loadstart", {});
-      }
       if (currentState === 2) {
         writeHead();
       }
@@ -287,6 +282,10 @@ const Xhook = function () {
           xhr.setRequestHeader(header, value);
         }
       }
+
+      //dispatch loadstart just before xhr.send() to simulate native XHR.
+      facade.dispatchEvent("loadstart", {});
+
       //real send!
       xhr.send(request.body);
     };
