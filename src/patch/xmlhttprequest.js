@@ -27,6 +27,7 @@ const Xhook = function () {
   let transiting = undefined;
   let response = undefined;
   var currentState = 0;
+  let lastProgress = null;
 
   //==========================
   // Private API
@@ -97,11 +98,20 @@ const Xhook = function () {
     }
   };
 
+  const createZeroProgress = function () {
+    return {
+      lengthComputable: false,
+      loaded: 0,
+      total: 0,
+    };
+  };
+
   const emitFinal = function () {
+    const finalEvent = lastProgress ? lastProgress : createZeroProgress();
     if (!hasError) {
-      facade.dispatchEvent("load", {});
+      facade.dispatchEvent("load", finalEvent);
     }
-    facade.dispatchEvent("loadend", {});
+    facade.dispatchEvent("loadend", finalEvent);
     if (hasError) {
       facade.readyState = 0;
     }
@@ -192,6 +202,11 @@ const Xhook = function () {
   facade.addEventListener("abort", hasErrorHandler);
   // progress means we're current downloading...
   facade.addEventListener("progress", function (event) {
+    lastProgress = {
+      lengthComputable: event.lengthComputable,
+      loaded: event.loaded,
+      total: event.total,
+    };
     if (currentState < 3) {
       setReadyState(3);
     } else if (xhr.readyState <= 3) {
@@ -284,7 +299,7 @@ const Xhook = function () {
       }
 
       //dispatch loadstart just before xhr.send() to simulate native XHR.
-      facade.dispatchEvent("loadstart", {});
+      facade.dispatchEvent("loadstart", createZeroProgress());
 
       //real send!
       xhr.send(request.body);
