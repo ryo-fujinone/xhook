@@ -232,6 +232,7 @@ const Xhook = function () {
     currentState = 0;
     hasError = false;
     transiting = false;
+    lastProgress = null;
     //reset request
     request.headers = {};
     request.headerNames = {};
