@@ -3,13 +3,14 @@ import typescript from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
 import { version } from "./package.json";
 
-const year = new Date().getFullYear();
+// const year = new Date().getFullYear();
 
 const banner =
-  `//XHook - v${version} - ` +
-  "https://github.com/jpillora/xhook\n" +
+  `//XHook - v${version} (patched) - ` +
+  "https://github.com/ryo-fujinone/xhook\n" +
   `//Jaime Pillora <dev@jpillora.com> - ` +
-  `MIT Copyright ${year}`;
+  `MIT Copyright 2023\n` +
+  `//ryo-fujinone - MIT Copyright 2025`;
 
 const baseIifeConfig = {
   banner,
@@ -31,7 +32,7 @@ export default defineConfig({
       plugins: [
         terser({
           format: {
-            comments: /^(XHook|Jaime)/,
+            comments: /^(XHook|Jaime|ryo-fujinone)/,
           },
         }),
       ],
